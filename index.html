@@ -133,98 +133,41 @@
       <div class="timeline-line"></div>
     </div>
     <script>
-      const videoData = [
-        {
-          date: "2025. 5",
-          title: "밤베르크 심포니",
-          views: "921회",
-          likes: "82개",
-          emotion: "🎉",
-          thumbnailUrl: "https://i.ytimg.com/vi/placeholder1/hqdefault.jpg",
-        },
-        {
-          date: "2025. 5",
-          title: "정재형 & 알렉산더",
-          views: "12회",
-          likes: "5개",
-          emotion: "🤔",
-          thumbnailUrl: "https://i.ytimg.com/vi/placeholder2/hqdefault.jpg",
-        },
-        {
-          date: "2025. 4",
-          title: "최희연 piano",
-          views: "64회",
-          likes: "15개",
-          emotion: "💖",
-          thumbnailUrl: "https://i.ytimg.com/vi/placeholder3/hqdefault.jpg",
-        },
-        {
-          date: "2025. 3",
-          title: "KBS 교향악단",
-          views: "22회",
-          likes: "7개",
-          emotion: "👏",
-          thumbnailUrl: "https://i.ytimg.com/vi/placeholder4/hqdefault.jpg",
-        },
-        {
-          date: "2024. 12",
-          title: "연말결산 라이브",
-          views: "1050회",
-          likes: "150개",
-          emotion: "🥳",
-          thumbnailUrl: "https://i.ytimg.com/vi/placeholder5/hqdefault.jpg",
-        },
-        {
-          date: "2024. 10",
-          title: "가을 음악회 스케치",
-          views: "320회",
-          likes: "45개",
-          emotion: "🍂",
-          thumbnailUrl: "https://i.ytimg.com/vi/placeholder6/hqdefault.jpg",
-        },
-      ];
-      const subscriberData = [
-        {
-          date: "2025. 5",
-          subscribers: 12500,
-          change: "+200명",
-          emotion: "🚀",
-        },
-        {
-          date: "2025. 4",
-          subscribers: 12300,
-          change: "+150명",
-          emotion: "📈",
-        },
-        {
-          date: "2025. 3",
-          subscribers: 12150,
-          change: "+100명",
-          emotion: "😊",
-        },
-        {
-          date: "2025. 2",
-          subscribers: 12050,
-          change: "-50명",
-          emotion: "😟",
-        },
-        {
-          date: "2025. 1",
-          subscribers: 12100,
-          change: "+300명",
-          emotion: "🌟",
-        },
-        {
-          date: "2024. 12",
-          subscribers: 11800,
-          change: "+500명",
-          emotion: "🎊",
-        },
-      ];
+      let videoData = [];
+      let subscriberData = [];
+
       const timelineContainer = document.getElementById("timelineContainer");
       const videosTab = document.getElementById("videosTab");
       const subscribersTab = document.getElementById("subscribersTab");
       let subscriberChart = null;
+
+      async function loadData() {
+        try {
+          const [videosResponse, subscribersResponse] = await Promise.all([
+            fetch('./videos.json'),
+            fetch('./subscribers.json')
+          ]);
+
+          if (!videosResponse.ok || !subscribersResponse.ok) {
+            throw new Error('Failed to load data files.');
+          }
+
+          videoData = await videosResponse.json();
+          subscriberData = await subscribersResponse.json();
+
+          // All data is loaded, now initialize the page
+          initializeApp(); 
+        } catch (error) {
+          console.error("Error loading data:", error);
+          // Optionally, display an error message to the user on the page
+          timelineContainer.innerHTML = "<p class='text-red-400 text-center'>Error loading data. Please try refreshing the page.</p>";
+        }
+      }
+
+      function initializeApp() {
+        // Initial load
+        showTab("videos");
+      }
       function createVideoItem(item) {
         return `
                 <div class="timeline-item fade-in" style="margin-left: 2rem;">
@@ -367,10 +310,10 @@
           renderTimeline(subscriberData, createSubscriberItem, true);
         }
       }
-      // Initial load
-      showTab("videos");
       // Infinite scroll (simplified example)
-      let loading = false;
+      // This event listener is added once and will use the populated videoData and subscriberData
+      // when the scroll event occurs and its callback is executed.
+      let loading = false; 
       window.addEventListener("scroll", () => {
         if (
           window.innerHeight + window.scrollY >=
@@ -441,6 +384,8 @@
           }, 1000);
         }
       });
+
+      loadData();
     </script>
   </body>
 </html>

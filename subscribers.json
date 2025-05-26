@@ -1,0 +1,38 @@
+[
+  {
+    "date": "2025. 5",
+    "subscribers": 12500,
+    "change": "+200명",
+    "emotion": "🚀"
+  },
+  {
+    "date": "2025. 4",
+    "subscribers": 12300,
+    "change": "+150명",
+    "emotion": "📈"
+  },
+  {
+    "date": "2025. 3",
+    "subscribers": 12150,
+    "change": "+100명",
+    "emotion": "😊"
+  },
+  {
+    "date": "2025. 2",
+    "subscribers": 12050,
+    "change": "-50명",
+    "emotion": "😟"
+  },
+  {
+    "date": "2025. 1",
+    "subscribers": 12100,
+    "change": "+300명",
+    "emotion": "🌟"
+  },
+  {
+    "date": "2024. 12",
+    "subscribers": 11800,
+    "change": "+500명",
+    "emotion": "🎊"
+  }
+]
