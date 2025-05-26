@@ -13,6 +13,7 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       body {
         font-family: "Noto Sans KR", sans-serif;
@@ -92,10 +93,13 @@
           transform: translateY(0);
         }
       }
-    </style>
-    <style>
-      body {
-        min-height: max(884px, 100dvh);
+      .chart-container {
+        background-color: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 2rem;
       }
     </style>
     <style>
@@ -182,37 +186,37 @@
       const subscriberData = [
         {
           date: "2025. 5",
-          subscribers: "12,500명",
+          subscribers: 12500,
           change: "+200명",
           emotion: "🚀",
         },
         {
           date: "2025. 4",
-          subscribers: "12,300명",
+          subscribers: 12300,
           change: "+150명",
           emotion: "📈",
         },
         {
           date: "2025. 3",
-          subscribers: "12,150명",
+          subscribers: 12150,
           change: "+100명",
           emotion: "😊",
         },
         {
           date: "2025. 2",
-          subscribers: "12,050명",
+          subscribers: 12050,
           change: "-50명",
           emotion: "😟",
         },
         {
           date: "2025. 1",
-          subscribers: "12,100명",
+          subscribers: 12100,
           change: "+300명",
           emotion: "🌟",
         },
         {
           date: "2024. 12",
-          subscribers: "11,800명",
+          subscribers: 11800,
           change: "+500명",
           emotion: "🎊",
         },
@@ -220,6 +224,7 @@
       const timelineContainer = document.getElementById("timelineContainer");
       const videosTab = document.getElementById("videosTab");
       const subscribersTab = document.getElementById("subscribersTab");
+      let subscriberChart = null;
       function createVideoItem(item) {
         return `
                 <div class="timeline-item fade-in" style="margin-left: 2rem;">
@@ -256,30 +261,110 @@
                 <div class="timeline-item fade-in" style="margin-left: 2rem;">
                     <div class="timeline-connector"></div>
                      <div class="flex justify-between items-start mb-2">
-                        <h3 class="text-lg font-semibold text-indigo-300">구독자 현황</h3>
+                        <h3 class="text-lg font-semibold text-indigo-300">구독자: ${item.subscribers.toLocaleString()}명</h3>
                         <span class="text-sm text-gray-400">${item.date}</span>
                     </div>
-                    <p class="text-2xl font-bold text-sky-300">${item.subscribers}</p>
                     <p class="text-sm ${changeColor}">${item.change}</p>
                     <div class="absolute top-4 right-4 text-2xl">${item.emotion}</div>
                 </div>
             `;
       }
-      function renderTimeline(data, itemCreator) {
-        timelineContainer.innerHTML = '<div class="timeline-line"></div>'; // Reset with line
-        data.forEach((item) => {
-          timelineContainer.innerHTML += itemCreator(item);
+      function renderSubscriberChart(data) {
+        const chartData = data.slice().reverse(); // Create a reversed copy for the chart (chronological)
+        const ctx = document
+          .getElementById("subscriberLineChart")
+          .getContext("2d");
+        if (subscriberChart) {
+          subscriberChart.destroy();
+        }
+        subscriberChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: chartData.map((item) => item.date),
+            datasets: [
+              {
+                label: "구독자 수",
+                data: chartData.map((item) => item.subscribers),
+                borderColor: "#6366F1",
+                backgroundColor: "rgba(99, 102, 241, 0.2)",
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: "#F3F4F6",
+                pointBorderColor: "#4F46E5",
+                pointRadius: 5,
+                pointHoverRadius: 7,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: false,
+                ticks: {
+                  color: "#9CA3AF",
+                  font: { family: "'Noto Sans KR', sans-serif" },
+                },
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+              },
+              x: {
+                ticks: {
+                  color: "#9CA3AF",
+                  font: { family: "'Noto Sans KR', sans-serif" },
+                },
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#D1D5DB",
+                  font: { family: "'Noto Sans KR', sans-serif" },
+                },
+              },
+            },
+          },
         });
       }
+
+      function renderTimeline(data, itemCreator, isSubscriberTab = false) {
+        let contentHtml = '';
+        if (isSubscriberTab) {
+          contentHtml += `
+            <div class="chart-container fade-in">
+              <canvas id="subscriberLineChart"></canvas>
+            </div>
+          `;
+        }
+        contentHtml += '<div class="timeline-line"></div>'; // Add timeline line
+        data.forEach((item) => {
+          contentHtml += itemCreator(item);
+        });
+        timelineContainer.innerHTML = contentHtml;
+
+        if (isSubscriberTab) {
+          renderSubscriberChart(data); // subscriberData is newest first, chart function handles reversing
+        }
+      }
+
       function showTab(tabName) {
         if (tabName === "videos") {
           videosTab.classList.add("active");
           subscribersTab.classList.remove("active");
+          if (subscriberChart) { // Destroy chart if it exists and switching away from subscribers tab
+            subscriberChart.destroy();
+            subscriberChart = null;
+          }
           renderTimeline(videoData, createVideoItem);
         } else if (tabName === "subscribers") {
           subscribersTab.classList.add("active");
           videosTab.classList.remove("active");
-          renderTimeline(subscriberData, createSubscriberItem);
+          renderTimeline(subscriberData, createSubscriberItem, true);
         }
       }
       // Initial load
@@ -298,9 +383,9 @@
             const currentTab = videosTab.classList.contains("active")
               ? "videos"
               : "subscribers";
-            const newData =
-              currentTab === "videos"
-                ? [
+            
+            if (currentTab === "videos") {
+                const newData = [ // Example new video data
                     {
                       date: "2024. 08",
                       title: "새로운 시리즈 예고",
@@ -319,32 +404,38 @@
                       thumbnailUrl:
                         "https://i.ytimg.com/vi/placeholder8/hqdefault.jpg",
                     },
-                  ]
-                : [
+                  ];
+              videoData.push(...newData);
+              // Append new items without clearing existing ones or the timeline line
+              newData.forEach(item => timelineContainer.innerHTML += createVideoItem(item));
+            } else { // Subscribers tab
+                 const newSubscriberEntries = [ // Example new subscriber data
                     {
                       date: "2024. 11",
-                      subscribers: "11,300명",
+                      subscribers: 11300, 
                       change: "+100명",
                       emotion: "🙂",
                     },
                     {
                       date: "2024. 10",
-                      subscribers: "11,200명",
+                      subscribers: 11200,
                       change: "-50명",
                       emotion: "😥",
                     },
                   ];
-            if (currentTab === "videos") {
-              videoData.push(...newData);
-              newData.forEach(
-                (item) => (timelineContainer.innerHTML += createVideoItem(item))
-              );
-            } else {
-              subscriberData.push(...newData);
-              newData.forEach(
-                (item) =>
-                  (timelineContainer.innerHTML += createSubscriberItem(item))
-              );
+              subscriberData.push(...newSubscriberEntries); // Add to main data array (newest first)
+              
+              // Re-render timeline items part, preserving chart
+              let itemsHtml = '';
+              subscriberData.forEach((item) => {
+                itemsHtml += createSubscriberItem(item);
+              });
+              // This assumes chart container is the first child, and timeline line and items follow
+              const chartContainerHtml = timelineContainer.querySelector('.chart-container').outerHTML;
+              const timelineLineHtml = '<div class="timeline-line"></div>';
+              timelineContainer.innerHTML = chartContainerHtml + timelineLineHtml + itemsHtml;
+              
+              renderSubscriberChart(subscriberData); // Re-render chart with new data
             }
             loading = false;
           }, 1000);
