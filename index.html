@@ -144,7 +144,7 @@
       async function loadData() {
         try {
           const [videosResponse, subscribersResponse] = await Promise.all([
-            fetch('./videos.json'),
+            fetch('./stageone_videos.json'),
             fetch('./subscribers.json')
           ]);
 
