@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>스테이지원 유튜버의 역사 - 히스토리</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Noto Sans KR", sans-serif;
+        background: linear-gradient(to bottom, #6b7280, #1f2937);
+        color: #f3f4f6;
+        min-height: 100vh;
+      }
+      .tab-button {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        color: #d1d5db;
+      }
+      .tab-button.active {
+        background-color: #4f46e5;
+        color: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .timeline-item {
+        position: relative;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 0.75rem;
+        background-color: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      }
+      .timeline-connector {
+        position: absolute;
+        top: 1.5rem;
+        left: -0.75rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: #f3f4f6;
+        border-radius: 9999px;
+        border: 4px solid #4f46e5;
+      }
+      .timeline-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(1.5rem / 2 - 2px);
+        width: 4px;
+        background: linear-gradient(to bottom, #818cf8, #4f46e5, #3730a3);
+        z-index: -1;
+      }
+      .gradient-text {
+        background: linear-gradient(to right, #a5b4fc, #6366f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .icon-container {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        color: #9ca3af;
+      }
+      .emotion-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body class="p-4">
+    <header class="text-center mb-8">
+      <h1 class="text-3xl font-bold gradient-text">스테이지원 유튜버의 역사</h1>
+      <p class="text-lg text-gray-300">히스토리</p>
+    </header>
+    <div class="flex justify-center mb-8 space-x-4">
+      <button
+        class="tab-button active"
+        id="videosTab"
+        onclick="showTab('videos')"
+      >
+        영상
+      </button>
+      <button
+        class="tab-button"
+        id="subscribersTab"
+        onclick="showTab('subscribers')"
+      >
+        구독자
+      </button>
+    </div>
+    <div class="relative" id="timelineContainer">
+      <div class="timeline-line"></div>
+    </div>
+    <script>
+      const videoData = [
+        {
+          date: "2025. 5",
+          title: "밤베르크 심포니",
+          views: "921회",
+          likes: "82개",
+          emotion: "🎉",
+          thumbnailUrl: "https://i.ytimg.com/vi/placeholder1/hqdefault.jpg",
+        },
+        {
+          date: "2025. 5",
+          title: "정재형 & 알렉산더",
+          views: "12회",
+          likes: "5개",
+          emotion: "🤔",
+          thumbnailUrl: "https://i.ytimg.com/vi/placeholder2/hqdefault.jpg",
+        },
+        {
+          date: "2025. 4",
+          title: "최희연 piano",
+          views: "64회",
+          likes: "15개",
+          emotion: "💖",
+          thumbnailUrl: "https://i.ytimg.com/vi/placeholder3/hqdefault.jpg",
+        },
+        {
+          date: "2025. 3",
+          title: "KBS 교향악단",
+          views: "22회",
+          likes: "7개",
+          emotion: "👏",
+          thumbnailUrl: "https://i.ytimg.com/vi/placeholder4/hqdefault.jpg",
+        },
+        {
+          date: "2024. 12",
+          title: "연말결산 라이브",
+          views: "1050회",
+          likes: "150개",
+          emotion: "🥳",
+          thumbnailUrl: "https://i.ytimg.com/vi/placeholder5/hqdefault.jpg",
+        },
+        {
+          date: "2024. 10",
+          title: "가을 음악회 스케치",
+          views: "320회",
+          likes: "45개",
+          emotion: "🍂",
+          thumbnailUrl: "https://i.ytimg.com/vi/placeholder6/hqdefault.jpg",
+        },
+      ];
+      const subscriberData = [
+        {
+          date: "2025. 5",
+          subscribers: "12,500명",
+          change: "+200명",
+          emotion: "🚀",
+        },
+        {
+          date: "2025. 4",
+          subscribers: "12,300명",
+          change: "+150명",
+          emotion: "📈",
+        },
+        {
+          date: "2025. 3",
+          subscribers: "12,150명",
+          change: "+100명",
+          emotion: "😊",
+        },
+        {
+          date: "2025. 2",
+          subscribers: "12,050명",
+          change: "-50명",
+          emotion: "😟",
+        },
+        {
+          date: "2025. 1",
+          subscribers: "12,100명",
+          change: "+300명",
+          emotion: "🌟",
+        },
+        {
+          date: "2024. 12",
+          subscribers: "11,800명",
+          change: "+500명",
+          emotion: "🎊",
+        },
+      ];
+      const timelineContainer = document.getElementById("timelineContainer");
+      const videosTab = document.getElementById("videosTab");
+      const subscribersTab = document.getElementById("subscribersTab");
+      function createVideoItem(item) {
+        return `
+                <div class="timeline-item fade-in" style="margin-left: 2rem;">
+                    <div class="timeline-connector"></div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <img src="${item.thumbnailUrl}" alt="${item.title} 썸네일" class="w-full md:w-48 h-auto object-cover rounded-lg mb-2 md:mb-0">
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-semibold text-indigo-300">${item.title}</h3>
+                                <span class="text-sm text-gray-400">${item.date}</span>
+                            </div>
+                            <div class="text-gray-300">
+                                <div class="icon-container">
+                                    <span class="material-icons text-base">visibility</span>
+                                    <span>${item.views}</span>
+                                </div>
+                                <div class="icon-container mt-1">
+                                    <span class="material-icons text-base">thumb_up</span>
+                                    <span>${item.likes}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-4 right-4 text-2xl">${item.emotion}</div>
+                </div>
+            `;
+      }
+      function createSubscriberItem(item) {
+        const isPositiveChange = item.change.startsWith("+");
+        const changeColor = isPositiveChange
+          ? "text-green-400"
+          : "text-red-400";
+        return `
+                <div class="timeline-item fade-in" style="margin-left: 2rem;">
+                    <div class="timeline-connector"></div>
+                     <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-semibold text-indigo-300">구독자 현황</h3>
+                        <span class="text-sm text-gray-400">${item.date}</span>
+                    </div>
+                    <p class="text-2xl font-bold text-sky-300">${item.subscribers}</p>
+                    <p class="text-sm ${changeColor}">${item.change}</p>
+                    <div class="absolute top-4 right-4 text-2xl">${item.emotion}</div>
+                </div>
+            `;
+      }
+      function renderTimeline(data, itemCreator) {
+        timelineContainer.innerHTML = '<div class="timeline-line"></div>'; // Reset with line
+        data.forEach((item) => {
+          timelineContainer.innerHTML += itemCreator(item);
+        });
+      }
+      function showTab(tabName) {
+        if (tabName === "videos") {
+          videosTab.classList.add("active");
+          subscribersTab.classList.remove("active");
+          renderTimeline(videoData, createVideoItem);
+        } else if (tabName === "subscribers") {
+          subscribersTab.classList.add("active");
+          videosTab.classList.remove("active");
+          renderTimeline(subscriberData, createSubscriberItem);
+        }
+      }
+      // Initial load
+      showTab("videos");
+      // Infinite scroll (simplified example)
+      let loading = false;
+      window.addEventListener("scroll", () => {
+        if (
+          window.innerHeight + window.scrollY >=
+            document.body.offsetHeight - 100 &&
+          !loading
+        ) {
+          loading = true;
+          // Simulate loading more data
+          setTimeout(() => {
+            const currentTab = videosTab.classList.contains("active")
+              ? "videos"
+              : "subscribers";
+            const newData =
+              currentTab === "videos"
+                ? [
+                    {
+                      date: "2024. 08",
+                      title: "새로운 시리즈 예고",
+                      views: "500회",
+                      likes: "70개",
+                      emotion: "👀",
+                      thumbnailUrl:
+                        "https://i.ytimg.com/vi/placeholder7/hqdefault.jpg",
+                    },
+                    {
+                      date: "2024. 06",
+                      title: "콜라보레이션 영상",
+                      views: "1200회",
+                      likes: "200개",
+                      emotion: "🤝",
+                      thumbnailUrl:
+                        "https://i.ytimg.com/vi/placeholder8/hqdefault.jpg",
+                    },
+                  ]
+                : [
+                    {
+                      date: "2024. 11",
+                      subscribers: "11,300명",
+                      change: "+100명",
+                      emotion: "🙂",
+                    },
+                    {
+                      date: "2024. 10",
+                      subscribers: "11,200명",
+                      change: "-50명",
+                      emotion: "😥",
+                    },
+                  ];
+            if (currentTab === "videos") {
+              videoData.push(...newData);
+              newData.forEach(
+                (item) => (timelineContainer.innerHTML += createVideoItem(item))
+              );
+            } else {
+              subscriberData.push(...newData);
+              newData.forEach(
+                (item) =>
+                  (timelineContainer.innerHTML += createSubscriberItem(item))
+              );
+            }
+            loading = false;
+          }, 1000);
+        }
+      });
+    </script>
+  </body>
+</html>
